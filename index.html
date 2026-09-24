@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A free, unofficial full-length exam simulator for the AWS Certified AI Practitioner (AIF-C01): 65 questions, a 90-minute clock, flag-for-review, and a scaled 100-1000 score against the real 700 pass mark." />
+  <meta name="color-scheme" content="light dark" />
+  <title>AIF-C01 Exam Sim — AWS Certified AI Practitioner</title>
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230b7285'/%3E%3Ctext x='50' y='50' text-anchor='middle' dominant-baseline='central' font-family='monospace' font-size='44' font-weight='bold' fill='%23fff'%3E%E2%8F%B1%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="bar">
+    <div class="bar__inner">
+      <a class="brand" href="./">
+        <span class="brand__mark">AIF</span>
+        <span class="brand__name">Exam&nbsp;Sim<small>AIF-C01</small></span>
+      </a>
+      <span class="bar__spacer"></span>
+      <div id="status" class="status" aria-live="off"></div>
+      <button class="iconbtn" data-act="theme" aria-label="Toggle light or dark theme" title="Toggle theme">◐</button>
+    </div>
+  </header>
+
+  <main id="app" class="app">
+    <noscript>
+      <div class="card">
+        <h2 class="card__title">JavaScript required</h2>
+        <p class="card__sub">This simulator runs entirely in your browser and needs JavaScript enabled.</p>
+      </div>
+    </noscript>
+  </main>
+
+  <div id="dialog"></div>
+
+  <footer class="foot">
+    <p>
+      Unofficial study aid for the <strong>AWS Certified AI Practitioner</strong> (AIF-C01) exam — not affiliated with
+      or endorsed by Amazon Web Services, and not real exam content. Everything runs and is stored in your browser.
+      Confirm details against the official
+      <a href="https://aws.amazon.com/certification/certified-ai-practitioner/" target="_blank" rel="noopener">exam guide</a>.
+    </p>
+  </footer>
+
+  <!-- Classic scripts, no bundler: works on GitHub Pages and straight from file:// -->
+  <script src="./assets/js/domains.js"></script>
+  <script src="./assets/js/questions.js"></script>
+  <script src="./assets/js/app.js"></script>
+</body>
+</html>
