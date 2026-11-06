@@ -4,14 +4,9 @@ A full-length, timed **exam simulator** for the **AWS Certified AI Practitioner 
 
 > Unofficial. Not affiliated with or endorsed by Amazon Web Services, and not real exam content. A study aid — always confirm details against the official [exam guide](https://aws.amazon.com/certification/certified-ai-practitioner/).
 
-## Also here: CCA-F Exam Sim
+## Sister project: CCA-F Exam Sim
 
-**[`ccaf.html`](https://danielchioro.github.io/AIFC01Simulator/ccaf.html)** runs the same engine for the **Claude Certified Architect – Foundations (CCA-F)** exam: 60 questions, a 120-minute clock, and a scaled 100–1000 score against the 720 pass mark.
-
-- **80 original scenario questions**, written for this project from Anthropic's public documentation and engineering posts. They are not real exam items. Each explanation says why the correct answer is right and why the distractors are wrong.
-- Spread across the five blueprint domains: Agentic Architecture & Orchestration (27%, 20 questions), Claude Code Configuration & Workflows (20%, 17), Prompt Engineering & Structured Output (20%, 14), Tool Design & MCP Integration (18%, 17), and Context Management & Reliability (15%, 12).
-- Each domain under 70% links to the relevant Anthropic docs on the results screen.
-- Unofficial. Not affiliated with or endorsed by Anthropic.
+The same engine also runs a simulator for the **Claude Certified Architect – Foundations (CCA-F)** exam, in its own repo: [CCAFSimulator](https://github.com/DaNiELChIoRo/CCAFSimulator) ([live](https://danielchioro.github.io/CCAFSimulator/)).
 
 ## Simulator, not a quiz
 
@@ -114,17 +109,14 @@ Because options are **shuffled at runtime**, never write an explanation or optio
 
 ```
 index.html              # AIF-C01 shell: top bar, main region, dialog host
-ccaf.html               # CCA-F shell: same engine, CCA-F bank + EXAM_CONFIG
 .nojekyll
 assets/
   css/styles.css        # exam-console theme (cyan accent, monospace clock)
   js/domains.js         # the 5 domains: weights, blurbs, study links
   js/questions.js       # the 66-question bank
-  js/ccaf-domains.js    # CCA-F: the 5 domains, weights, Anthropic doc links
-  js/ccaf-questions.js  # CCA-F: the 80-question bank
   js/app.js             # exam engine: paper, clock, scoring, report, review
 ```
 
-A page can sit a different exam on the same engine by defining `window.EXAM_CONFIG` before `app.js` loads: `spec` overrides the question count, minutes, pass mark, and the raw % mapped to it (`passPct`); `copy` overrides the exam name and source labels; and `storagePrefix` keeps that exam's history separate. `ccaf.html` is the worked example.
+A page can sit a different exam on the same engine by defining `window.EXAM_CONFIG` before `app.js` loads: `spec` overrides the question count, minutes, pass mark, and the raw % mapped to it (`passPct`); `copy` overrides the exam name and source labels; and `storagePrefix` keeps that exam's history separate. The [CCA-F Exam Sim](https://github.com/DaNiELChIoRo/CCAFSimulator) is the worked example.
 
 The engine is one IIFE with a small state object and four views (`intro → exam → report → review`), re-rendered from state on each interaction. The only exception is the clock, which patches its own node every second so a 65-dot navigator isn't rebuilt 5,400 times per paper.
