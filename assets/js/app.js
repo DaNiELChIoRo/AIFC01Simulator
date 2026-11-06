@@ -17,22 +17,43 @@
   "use strict";
 
   /* ------------------------------------------------------------- exam spec */
+  /*
+   * Defaults describe AIF-C01. A page can sit a different exam on the same
+   * engine by defining window.EXAM_CONFIG before this script loads:
+   *   { spec: { ...overrides of SPEC }, storagePrefix, copy: { ...overrides of COPY } }
+   */
+  var CONFIG = window.EXAM_CONFIG || {};
+
   var SPEC = {
     questions: 65,          // items on a real AIF-C01 paper
     minutes: 90,            // official time limit
     passScaled: 700,        // scaled pass mark, on a 100–1000 range
+    passPct: 70,            // raw % we map onto the pass mark (see scaledFrom)
     scaleMin: 100,
     scaleMax: 1000,
     readyLine: 70,          // per-domain % below which we suggest review
   };
+  Object.keys(CONFIG.spec || {}).forEach(function (k) { SPEC[k] = CONFIG.spec[k]; });
 
-  var KEY_SESSION = "aifc01sim.session.v1";  // the in-progress paper
-  var KEY_RESULTS = "aifc01sim.results.v1";  // past attempts
-  var KEY_THEME   = "aifc01sim.theme.v1";
+  var COPY = {
+    examName: "AWS Certified AI Practitioner",
+    examCode: "AIF-C01",
+    weightsSource: "the official AIF-C01 Exam Guide",
+    docsSource: "Official AWS documentation",
+  };
+  Object.keys(CONFIG.copy || {}).forEach(function (k) { COPY[k] = CONFIG.copy[k]; });
+
+  var PREFIX = CONFIG.storagePrefix || "aifc01sim";
+  var KEY_SESSION = PREFIX + ".session.v1";  // the in-progress paper
+  var KEY_RESULTS = PREFIX + ".results.v1";  // past attempts
+  var KEY_THEME   = "aifc01sim.theme.v1";    // shared: one theme across exams
   var LETTERS = ["A", "B", "C", "D", "E", "F"];
 
   var DOMAINS = window.EXAM_DOMAINS || {};
   var BANK = window.EXAM_QUESTIONS || [];
+
+  /** Domain keys ordered heaviest weight first, for the report's weighting note. */
+  var BY_WEIGHT = Object.keys(DOMAINS).sort(function (a, b) { return DOMAINS[b].weight - DOMAINS[a].weight; });
 
   /* ------------------------------------------------------------- utilities */
   function el(id) { return document.getElementById(id); }
@@ -168,16 +189,17 @@
   /**
    * AWS reports AIF-C01 on a scaled 100–1000 range with a 700 pass mark, and
    * does not publish the raw-to-scaled mapping. We use the straightforward
-   * linear interpolation that puts 70% correct exactly on the 700 line, which
+   * linear interpolation that puts SPEC.passPct (70% for AIF-C01) exactly on the pass line, which
    * makes the number comparable to the real report without pretending to
    * reproduce AWS's actual (undisclosed) equating.
    */
   function scaledFrom(pct) {
     var scaled;
-    if (pct <= 70) {
-      scaled = SPEC.scaleMin + (pct / 70) * (SPEC.passScaled - SPEC.scaleMin);
+    var p = SPEC.passPct;
+    if (pct <= p) {
+      scaled = SPEC.scaleMin + (pct / p) * (SPEC.passScaled - SPEC.scaleMin);
     } else {
-      scaled = SPEC.passScaled + ((pct - 70) / 30) * (SPEC.scaleMax - SPEC.passScaled);
+      scaled = SPEC.passScaled + ((pct - p) / (100 - p)) * (SPEC.scaleMax - SPEC.passScaled);
     }
     return Math.round(clamp(scaled, SPEC.scaleMin, SPEC.scaleMax));
   }
@@ -441,8 +463,8 @@
     out +=
       '<div class="hero">' +
         '<p class="hero__eyebrow">Unofficial exam simulation</p>' +
-        '<h1 class="hero__title">AWS Certified AI Practitioner</h1>' +
-        '<p class="hero__sub">A full-length, timed AIF-C01 paper under exam conditions: no feedback until you submit, then a scaled score against the real 700 pass mark.</p>' +
+        '<h1 class="hero__title">' + esc(COPY.examName) + "</h1>" +
+        '<p class="hero__sub">A full-length, timed ' + esc(COPY.examCode) + " paper under exam conditions: no feedback until you submit, then a scaled score against the real " + SPEC.passScaled + " pass mark.</p>" +
       "</div>";
 
     out +=
@@ -480,7 +502,7 @@
     out +=
       '<div class="card">' +
         '<h2 class="card__title">The five content domains</h2>' +
-        '<p class="card__sub">Weights are from the official AIF-C01 Exam Guide; the scored paper is drawn from a ' + BANK.length + '-question bank.</p>' +
+        '<p class="card__sub">Weights are from ' + esc(COPY.weightsSource) + '; each paper is drawn from a bank of ' + BANK.length + ' questions.</p>' +
         '<div class="blueprint">' + bp + "</div>" +
       "</div>";
 
@@ -633,8 +655,8 @@
           }).join("") +
         "</div>" +
         '<p class="bars__key">A weak domain costs you more the heavier its weight, so a gap in ' +
-          esc(DOMAINS.d3.name) + " (" + DOMAINS.d3.weight + "%) hurts more than the same gap in " +
-          esc(DOMAINS.d5.name) + " (" + DOMAINS.d5.weight + "%).</p>" +
+          esc(DOMAINS[BY_WEIGHT[0]].name) + " (" + DOMAINS[BY_WEIGHT[0]].weight + "%) hurts more than the same gap in " +
+          esc(DOMAINS[BY_WEIGHT[BY_WEIGHT.length - 1]].name) + " (" + DOMAINS[BY_WEIGHT[BY_WEIGHT.length - 1]].weight + "%).</p>" +
       "</div>";
 
     if (g.weak.length) {
@@ -652,7 +674,7 @@
       out +=
         '<div class="card">' +
           '<h2 class="card__title">Study these next</h2>' +
-          '<p class="card__sub">Official AWS documentation for every domain that came in under ' + SPEC.readyLine + "%.</p>" +
+          '<p class="card__sub">' + esc(COPY.docsSource) + ' for every domain that came in under ' + SPEC.readyLine + "%.</p>" +
           blocks +
         "</div>";
     } else {

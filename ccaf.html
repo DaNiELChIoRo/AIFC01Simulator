@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A free, unofficial full-length exam simulator for the Claude Certified Architect – Foundations (CCA-F) exam: 60 questions, a 120-minute clock, flag-for-review, and a scaled 100-1000 score against the 720 pass mark." />
+  <meta name="color-scheme" content="light dark" />
+  <title>CCA-F Exam Sim — Claude Certified Architect – Foundations</title>
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23c2410c'/%3E%3Ctext x='50' y='50' text-anchor='middle' dominant-baseline='central' font-family='monospace' font-size='44' font-weight='bold' fill='%23fff'%3E%E2%8F%B1%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="bar">
+    <div class="bar__inner">
+      <a class="brand" href="./ccaf.html">
+        <span class="brand__mark">CCA</span>
+        <span class="brand__name">Exam&nbsp;Sim<small>CCA-F</small></span>
+      </a>
+      <span class="bar__spacer"></span>
+      <div id="status" class="status" aria-live="off"></div>
+      <button class="iconbtn" data-act="theme" aria-label="Toggle light or dark theme" title="Toggle theme">◐</button>
+    </div>
+  </header>
+
+  <main id="app" class="app">
+    <noscript>
+      <div class="card">
+        <h2 class="card__title">JavaScript required</h2>
+        <p class="card__sub">This simulator runs entirely in your browser and needs JavaScript enabled.</p>
+      </div>
+    </noscript>
+  </main>
+
+  <div id="dialog"></div>
+
+  <footer class="foot">
+    <p>
+      Unofficial study aid for the <strong>Claude Certified Architect – Foundations</strong> (CCA-F) exam — not
+      affiliated with or endorsed by Anthropic. Questions are original, written from Anthropic's public documentation,
+      and are not real exam content. The 100–1000 score is an estimate: the real raw-to-scaled mapping isn't published.
+      Everything runs and is stored in your browser.
+      Also here: the <a href="./">AWS AIF-C01 Exam Sim</a>.
+    </p>
+  </footer>
+
+  <!-- Classic scripts, no bundler: works on GitHub Pages and straight from file:// -->
+  <script src="./assets/js/ccaf-domains.js"></script>
+  <script src="./assets/js/ccaf-questions.js"></script>
+  <script>
+    window.EXAM_DOMAINS = window.CCAF_DOMAINS;
+    window.EXAM_QUESTIONS = window.CCAF_QUESTIONS;
+    window.EXAM_CONFIG = {
+      storagePrefix: "ccafsim",
+      spec: { questions: 60, minutes: 120, passScaled: 720, passPct: 72 },
+      copy: {
+        examName: "Claude Certified Architect – Foundations",
+        examCode: "CCA-F",
+        weightsSource: "Anthropic's published CCA-F exam blueprint",
+        docsSource: "Anthropic documentation",
+      },
+    };
+  </script>
+  <script src="./assets/js/app.js"></script>
+</body>
+</html>
